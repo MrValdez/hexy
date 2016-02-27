@@ -8,8 +8,10 @@ pygame.init()
 screen = pygame.display.set_mode([800, 600])
 clock = pygame.time.Clock()
 
+channels = {}
+
 class PWM :
-  def update_pygame():
+  def update_pygame(self):
     #clock.tick(60)
     pygame.display.flip()
     
@@ -39,18 +41,28 @@ class PWM :
 
   def setPWM(self, channel, on, off):
     "Sets a single PWM channel"
-    if 0:
-      print(self.__LED0_ON_L+4*channel, on & 0xFF)
-      print(self.__LED0_ON_H+4*channel, on >> 8)
-      print(self.__LED0_OFF_L+4*channel, off & 0xFF)
-      print(self.__LED0_OFF_H+4*channel, off >> 8)
-      raw_input()
 
-    #if (self.debug):
-    #  print ("setPWM")
+    channel_targets = [self.__LED0_ON_L+4*channel, 
+                       self.__LED0_ON_H+4*channel,
+                       self.__LED0_OFF_L+4*channel,
+                       self.__LED0_OFF_H+4*channel]
+    # add channel if it isn't in the dictionary
+    for c in channel_targets:
+        if c not in channels:
+            channels[c] = 0
     
+    channels[channel_targets[0]] = on & 0xFF
+    channels[channel_targets[1]] = on >> 8
+    channels[channel_targets[2]] = off & 0xFF
+    channels[channel_targets[3]] = off >> 8
+
     self.update_pygame()
 
+    if 1:
+      for c in channel_targets:
+        print(channels[c])
+      raw_input()
+      
   def setAllPWM(self, on, off):
     "Sets a all PWM channels"
     if (self.debug):
