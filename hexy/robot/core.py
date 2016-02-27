@@ -1,4 +1,4 @@
-from ..comm.pwm import PWM
+from ..comm.matrix_simulator_pwm import PWM
 from time import sleep
 
 """ joint_key convention:
