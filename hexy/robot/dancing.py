@@ -1,5 +1,5 @@
 from pro import HexapodPro
-from time import sleep
+from core import sleep
 
 class DancingHexapod(HexapodPro):
 

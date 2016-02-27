@@ -1,5 +1,9 @@
 from ..comm.matrix_simulator_pwm import PWM
-from time import sleep
+from time import sleep as os_sleep
+
+def sleep(delta):
+    #os_sleep(delta)
+    pass
 
 """ joint_key convention:
     R - right, L - left
