@@ -4,7 +4,7 @@ from ..robot.core import sleep
 hexy =  Hexapod()
 
 print("lie flat, curl up, then get up")
-#hexy.boot_up()
+hexy.boot_up()
 
 print "rotate left"
 hexy.rotate(offset = 40)

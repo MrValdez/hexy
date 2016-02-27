@@ -3,6 +3,8 @@ from time import sleep as os_sleep
 
 def sleep(delta):
     #os_sleep(delta)
+    print ("sleep for {}".format(delta))
+    raw_input()
     pass
 
 """ joint_key convention:

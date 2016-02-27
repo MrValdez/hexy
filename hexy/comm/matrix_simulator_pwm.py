@@ -60,8 +60,7 @@ class PWM :
 
     if 1:
       for c in channel_targets:
-        print(channels[c])
-      raw_input()
+        print("{}: {}".format(c, channels[c]))
       
   def setAllPWM(self, on, off):
     "Sets a all PWM channels"
