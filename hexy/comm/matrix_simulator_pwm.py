@@ -1,25 +1,31 @@
 #!/usr/bin/python
 
-import time
 import math
 
-# ============================================================================
-# Adafruit PCA9685 16-Channel PWM Servo Driver
-# ============================================================================
+import pygame
+
+pygame.init()
+screen = pygame.display.set_mode([800, 600])
+clock = pygame.time.Clock()
 
 class PWM :
+  def update_pygame():
+    #clock.tick(60)
+    pygame.display.flip()
+    
+    screen.fill([0, 0, 0])
+    events = pygame.event.get()
+
   @classmethod
   def softwareReset(cls):
     "Sends a software reset (SWRST) command to all the servo drivers on the bus"
     if (self.debug):
       print ("reset")
     
-  def __init__(self, address=0x40, debug=False):
-  #def __init__(self, address=0x40, debug=True):
+  #def __init__(self, address=0x40, debug=False):
+  def __init__(self, address=0x40, debug=True):
     self.debug = debug
-    if (self.debug):
-      print("init")
-      print "Reseting PCA9685 MODE1 (without SLEEP) and MODE2"
+    
 
   def setPWMFreq(self, freq):
     "Sets the PWM frequency"
@@ -33,13 +39,17 @@ class PWM :
 
   def setPWM(self, channel, on, off):
     "Sets a single PWM channel"
-    print(self.__LED0_ON_L+4*channel, on & 0xFF)
-    print(self.__LED0_ON_H+4*channel, on >> 8)
-    print(self.__LED0_OFF_L+4*channel, off & 0xFF)
-    print(self.__LED0_OFF_H+4*channel, off >> 8)
+    if 0:
+      print(self.__LED0_ON_L+4*channel, on & 0xFF)
+      print(self.__LED0_ON_H+4*channel, on >> 8)
+      print(self.__LED0_OFF_L+4*channel, off & 0xFF)
+      print(self.__LED0_OFF_H+4*channel, off >> 8)
+      raw_input()
 
-    if (self.debug):
-      print ("setPWM")
+    #if (self.debug):
+    #  print ("setPWM")
+    
+    self.update_pygame()
 
   def setAllPWM(self, on, off):
     "Sets a all PWM channels"
