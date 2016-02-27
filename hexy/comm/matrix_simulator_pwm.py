@@ -4,8 +4,9 @@ import math
 
 import pygame
 
+resolution = [800, 600]
 pygame.init()
-screen = pygame.display.set_mode([800, 600])
+screen = pygame.display.set_mode(resolution)
 clock = pygame.time.Clock()
 
 channels = {}
@@ -17,6 +18,69 @@ class PWM :
     
     screen.fill([0, 0, 0])
     events = pygame.event.get()
+    
+    origin = [resolution[0] / 2, resolution[1] / 2]
+    def translate_joints():            
+        joints = []
+        
+        for key, value in channels.items():
+            start_pos = [0, 0]
+            end_pos = [10, 0]
+            
+            # translate to origin
+            for index, value in enumerate(origin):
+                start_pos[index] += value
+                end_pos[index] += value
+                # translate joints to their apropriate position
+    
+            ##############
+            # hardcoded warning: this is based on core.joint_properties
+            current_index = key - self.STARTING_LED
+            
+            # translate to left or right
+            if ((0 <= current_index < 12) or
+                (24 < current_index < 36) or
+                (48 < current_index < 60)):
+                # left side
+                position = -1
+            else:
+                # right side
+                position = +1
+
+            # hip, knee, ankle
+            if current_index % 3 == 0:
+                # hip
+                offset = 0
+            elif current_index % 3 == 1:
+                # knee
+                offset = 10
+            elif current_index % 3 == 2:
+                # ankle
+                offset = 20
+
+            start_pos[0] += (50 + offset + ((current_index%3) * 10)) * position
+            end_pos[0] += (50 + offset+ ((current_index %3)* 10)) * position
+
+            # translate backward
+            if (0 <= current_index < 24):
+                offset = 0
+            if (24 <= current_index < 48):
+                offset = 20
+            if (48 <= current_index < 72):
+                offset = 40
+            
+            start_pos[1] -= offset
+            end_pos[1] -= offset
+            ##############
+            
+            joints.append([start_pos, end_pos])            
+        return joints
+
+    joints = translate_joints()
+    
+    for start_pos, end_pos in joints:
+        color = pygame.Color(255, 255, 255)
+        pygame.draw.line(screen, color, start_pos, end_pos)
 
   @classmethod
   def softwareReset(cls):
@@ -38,6 +102,8 @@ class PWM :
   __LED0_ON_H          = 0x07
   __LED0_OFF_L         = 0x08
   __LED0_OFF_H         = 0x09
+  
+  STARTING_LED         = __LED0_ON_L
 
   def setPWM(self, channel, on, off):
     "Sets a single PWM channel"
