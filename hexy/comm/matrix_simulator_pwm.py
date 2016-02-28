@@ -23,17 +23,11 @@ class PWM :
     def translate_joints():            
         joints = []
         
-        for key, value in channels.items():
+        for key, angle in channels.items():
             start_pos = [0, 0]
-            end_pos = [10, 0]
-            
-            # translate to origin
-            for index, value in enumerate(origin):
-                start_pos[index] += value
-                end_pos[index] += value
-                # translate joints to their apropriate position
     
             ##############
+            # translate joints to their apropriate position
             # hardcoded warning: this is based on core.joint_properties
             current_index = key - self.STARTING_LED
             
@@ -51,15 +45,19 @@ class PWM :
             if current_index % 3 == 0:
                 # hip
                 offset = 0
+                color = (255, 128, 128)
             elif current_index % 3 == 1:
                 # knee
                 offset = 10
+                color = (255, 128, 255)
             elif current_index % 3 == 2:
                 # ankle
                 offset = 20
+                color = (255, 255, 255)
 
             start_pos[0] += (50 + offset + ((current_index%3) * 10)) * position
-            end_pos[0] += (50 + offset+ ((current_index %3)* 10)) * position
+#            end_pos = [start_pos[0], start_pos[1]]
+#            end_pos[0] += 10 * position
 
             # translate backward
             if (0 <= current_index < 24):
@@ -69,17 +67,37 @@ class PWM :
             if (48 <= current_index < 72):
                 offset = 40
             
-            start_pos[1] -= offset
-            end_pos[1] -= offset
+            #start_pos[1] -= offset
+            #end_pos[1] -= offset
             ##############
-            
-            joints.append([start_pos, end_pos])            
+
+            # add rotation from angle
+#            angle=math.radians(90)
+            #angle=90
+#            x = end_pos[0] * math.cos(angle) - end_pos[1] * math.sin(angle)
+#            y = end_pos[0] * math.sin(angle) + end_pos[1] * math.cos(angle)
+#            end_pos = [x, y]
+
+            angle = math.radians(90)
+            leg_distance = 10
+            x = leg_distance * math.cos(angle)
+            y = leg_distance * math.sin(angle)
+            end_pos = [x + start_pos[0], y + start_pos[1]]
+
+            # translate to origin
+            for index, value in enumerate(origin):
+                start_pos[index] += value
+                end_pos[index] += value
+                        
+            joints.append([color, start_pos, end_pos])            
         return joints
 
     joints = translate_joints()
-    
-    for start_pos, end_pos in joints:
-        color = pygame.Color(255, 255, 255)
+    from pprint import pprint
+    #pprint(joints)
+    #input()
+    for color, start_pos, end_pos in joints:
+        color = pygame.Color(*color)
         pygame.draw.line(screen, color, start_pos, end_pos)
 
   @classmethod
