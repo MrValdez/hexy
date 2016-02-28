@@ -20,6 +20,7 @@ class PWM :
     events = pygame.event.get()
     
     origin = [resolution[0] / 2, resolution[1] / 2]
+    leg_distance = 20
     def translate_joints():            
         joints = []
         
@@ -30,6 +31,10 @@ class PWM :
             # translate joints to their apropriate position
             # hardcoded warning: this is based on core.joint_properties
             current_index = key - self.STARTING_LED
+            
+            # we are only interested in every 3rd index
+            print (current_index)
+            if current_index % 4 != 2: continue
             
             # translate to left or right
             if ((0 <= current_index < 12) or
@@ -44,21 +49,19 @@ class PWM :
             # hip, knee, ankle
             if current_index % 3 == 0:
                 # hip
-                offset = 0
+                offset = leg_distance * 0
                 color = (255, 128, 128)
             elif current_index % 3 == 1:
                 # knee
-                offset = 10
+                offset = leg_distance * 1
                 color = (255, 128, 255)
             elif current_index % 3 == 2:
                 # ankle
-                offset = 20
+                offset = leg_distance * 2
                 color = (255, 255, 255)
 
             start_pos[0] += (50 + offset + ((current_index%3) * 10)) * position
-#            end_pos = [start_pos[0], start_pos[1]]
-#            end_pos[0] += 10 * position
-
+            
             # translate backward
             if (0 <= current_index < 24):
                 offset = 0
@@ -67,19 +70,15 @@ class PWM :
             if (48 <= current_index < 72):
                 offset = 40
             
-            #start_pos[1] -= offset
-            #end_pos[1] -= offset
+            start_pos[1] -= offset
             ##############
 
             # add rotation from angle
-#            angle=math.radians(90)
-            #angle=90
 #            x = end_pos[0] * math.cos(angle) - end_pos[1] * math.sin(angle)
 #            y = end_pos[0] * math.sin(angle) + end_pos[1] * math.cos(angle)
 #            end_pos = [x, y]
 
-            angle = math.radians(90)
-            leg_distance = 10
+            angle = math.radians(angle)
             x = leg_distance * math.cos(angle)
             y = leg_distance * math.sin(angle)
             end_pos = [x + start_pos[0], y + start_pos[1]]
@@ -95,7 +94,7 @@ class PWM :
     joints = translate_joints()
     from pprint import pprint
     #pprint(joints)
-    #input()
+    #raw_input()
     for color, start_pos, end_pos in joints:
         color = pygame.Color(*color)
         pygame.draw.line(screen, color, start_pos, end_pos)
