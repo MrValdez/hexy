@@ -23,7 +23,10 @@ class PWM :
     leg_distance = 20
     def translate_joints():            
         joints = []
+        parent_pos = list(origin)
+        parent_angle = 0
         
+        print(len(channels))
         for key, angle in channels.items():
             start_pos = [0, 0]
     
@@ -33,8 +36,10 @@ class PWM :
             current_index = key - self.STARTING_LED
             
             # we are only interested in every 3rd index
-            print (current_index)
-            if current_index % 4 != 2: continue
+            if current_index % 4 != 2: 
+                continue
+                        
+            #angle += parent_angle
             
             # translate to left or right
             if ((0 <= current_index < 12) or
@@ -47,30 +52,37 @@ class PWM :
                 position = +1
 
             # hip, knee, ankle
-            if current_index % 3 == 0:
+            if current_index % 12 == 2:
                 # hip
                 offset = leg_distance * 0
                 color = (255, 128, 128)
-            elif current_index % 3 == 1:
+                parent_pos = list(origin)
+                parent_angle = 0
+            elif current_index % 12 == 6:
                 # knee
                 offset = leg_distance * 1
                 color = (255, 128, 255)
-            elif current_index % 3 == 2:
+            elif current_index % 12 == 10:
                 # ankle
                 offset = leg_distance * 2
                 color = (255, 255, 255)
 
-            start_pos[0] += (50 + offset + ((current_index%3) * 10)) * position
+            if current_index % 12 == 2:
+                # hip
+                start_pos[0] += (50 + offset + ((current_index%3) * 10)) * position
+                print "HIP"
             
             # translate backward
             if (0 <= current_index < 24):
                 offset = 0
             if (24 <= current_index < 48):
-                offset = 20
-            if (48 <= current_index < 72):
                 offset = 40
+            if (48 <= current_index < 72):
+                offset = 80
             
-            start_pos[1] -= offset
+            if current_index % 12 == 2:
+                # hip
+                start_pos[1] -= offset
             ##############
 
             # add rotation from angle
@@ -84,13 +96,18 @@ class PWM :
             end_pos = [x + start_pos[0], y + start_pos[1]]
 
             # translate to origin
+            #print(parent_pos)
             for index, value in enumerate(origin):
+                value = parent_pos[index]
+                
                 start_pos[index] += value
                 end_pos[index] += value
-                        
-            joints.append([color, start_pos, end_pos])            
+                
+                parent_pos[index] = end_pos[index]
+                
+            joints.append([color, start_pos, end_pos])
         return joints
-
+    #print "---"
     joints = translate_joints()
     from pprint import pprint
     #pprint(joints)
@@ -141,7 +158,7 @@ class PWM :
 
     self.update_pygame()
 
-    if 1:
+    if 0:
       for c in channel_targets:
         print("{}: {}".format(c, channels[c]))
       
